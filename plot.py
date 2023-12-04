@@ -63,11 +63,11 @@ colors = {
 # Retrieve a histogram from the input file based on the process and the variable
 # name
 def getHistogram(tfile, name, variable, tag=""):
-    name = "{}_{}{}".format(name, variable, tag)
-    h = tfile.Get(name)
-    if not h:
-        raise Exception("Failed to load histogram {}.".format(name))
-    return h
+    name = f"{name}_{variable}{tag}"
+    if h := tfile.Get(name):
+        return h
+    else:
+        raise Exception(f"Failed to load histogram {name}.")
 
 
 # Main function of the plotting step
@@ -191,10 +191,7 @@ def main(path, output, variable, scale):
     c = ROOT.TCanvas("", "", 600, 600)
     stack.Draw("hist")
     name = data.GetTitle()
-    if name in labels:
-        title = labels[name]
-    else:
-        title = name
+    title = labels[name] if name in labels else name
     stack.GetXaxis().SetTitle(title)
     stack.GetYaxis().SetTitle("N_{Events}")
     stack.SetMaximum(max(stack.GetMaximum(), data.GetMaximum()) * 1.4)
@@ -229,8 +226,8 @@ def main(path, output, variable, scale):
     latex.DrawLatex(0.16, 0.935, "#bf{CMS Open Data}")
 
     # Save
-    c.SaveAs("{}/{}.pdf".format(output, variable))
-    c.SaveAs("{}/{}.png".format(output, variable))
+    c.SaveAs(f"{output}/{variable}.pdf")
+    c.SaveAs(f"{output}/{variable}.png")
 
 
 # Loop over all variable names and make a plot for each

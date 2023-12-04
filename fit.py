@@ -14,28 +14,28 @@ def main(path, output):
     h = ROOT.TFile(path, "READ")
 
     # Data
-    data = h.Get("dataRunB_{}".format(variable))
-    dataRunC = h.Get("dataRunC_{}".format(variable))
+    data = h.Get(f"dataRunB_{variable}")
+    dataRunC = h.Get(f"dataRunC_{variable}")
     data.Add(dataRunC)
 
     # Backgrounds
-    ztt = h.Get("ZTT_{}".format(variable))
-    zll = h.Get("ZLL_{}".format(variable))
-    tt = h.Get("TT_{}".format(variable))
+    ztt = h.Get(f"ZTT_{variable}")
+    zll = h.Get(f"ZLL_{variable}")
+    tt = h.Get(f"TT_{variable}")
 
-    w = h.Get("W1J_{}".format(variable))
-    w2 = h.Get("W2J_{}".format(variable))
-    w3 = h.Get("W3J_{}".format(variable))
+    w = h.Get(f"W1J_{variable}")
+    w2 = h.Get(f"W2J_{variable}")
+    w3 = h.Get(f"W3J_{variable}")
     w.Add(w2)
     w.Add(w3)
 
     # QCD estimate from same-sign region
-    data_cr = h.Get("dataRunB_{}_cr".format(variable))
-    dataRunC_cr = h.Get("dataRunC_{}_cr".format(variable))
+    data_cr = h.Get(f"dataRunB_{variable}_cr")
+    dataRunC_cr = h.Get(f"dataRunC_{variable}_cr")
     data_cr.Add(dataRunC_cr)
 
     for label in ["ZTT", "ZLL", "TT", "W1J", "W2J", "W3J"]:
-        hist = h.Get("{}_{}_cr".format(label, variable))
+        hist = h.Get(f"{label}_{variable}_cr")
         data_cr.Add(hist, -1.0)
     qcd = data_cr
     QCDScaleFactor = 0.80
@@ -70,7 +70,7 @@ def main(path, output):
 
     for process in ["W", "ZLL", "TT", "QCD"]:
         sample = ROOT.RooStats.HistFactory.Sample(process, process, inputfile)
-        sample.AddOverallSys(process + "_xsec_sys",  0.9, 1.1)
+        sample.AddOverallSys(f"{process}_xsec_sys", 0.9, 1.1)
         channel.AddSample(sample)
 
     meas.AddChannel(channel)

@@ -5,19 +5,19 @@ ROOT.gROOT.SetBatch(True)
 
 
 def main(path, fraction, output):
-    print("Input file: {}".format(path))
+    print(f"Input file: {path}")
     df = ROOT.RDataFrame("Events", path)
 
     count = df.Count()
     num_events = count.GetValue()
-    print("Number of events: {}".format(num_events))
+    print(f"Number of events: {num_events}")
 
     reduced_events = int(num_events * fraction)
-    print("Reduce the initial dataset to {} events".format(reduced_events))
+    print(f"Reduce the initial dataset to {reduced_events} events")
 
     basename = os.path.basename(path)
     fullpath = os.path.join(output, basename)
-    print("Write out to {}".format(fullpath))
+    print(f"Write out to {fullpath}")
     df.Range(reduced_events).Snapshot("Events", fullpath)
 
 
