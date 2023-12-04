@@ -94,7 +94,7 @@ def main(sample, process, output):
     variables = ranges.keys()
 
     # Process skimmed datasets and produce histograms of variables
-    print(">>> Process skimmed sample {} for process {}".format(sample, process))
+    print(f">>> Process skimmed sample {sample} for process {process}")
 
     # Load skimmed dataset and apply baseline selection
     df = ROOT.ROOT.RDataFrame("Events", sample)\
@@ -104,24 +104,26 @@ def main(sample, process, output):
     # Book histograms for the signal region
     df1 = df.Filter("q_1*q_2<0", "Require opposited charge for signal region")
     df1 = filterGenMatch(df1, process)
-    hists = {}
-    for variable in variables:
-        hists[variable] = bookHistogram(df1, variable, ranges[variable])
+    hists = {
+        variable: bookHistogram(df1, variable, ranges[variable])
+        for variable in variables
+    }
     report1 = df1.Report()
 
     # Book histograms for the control region used to estimate the QCD contribution
     df2 = df.Filter("q_1*q_2>0", "Control region for QCD estimation")
     df2 = filterGenMatch(df2, process)
-    hists_cr = {}
-    for variable in variables:
-        hists_cr[variable] = bookHistogram(df2, variable, ranges[variable])
+    hists_cr = {
+        variable: bookHistogram(df2, variable, ranges[variable])
+        for variable in variables
+    }
     report2 = df2.Report()
 
     # Write histograms to output file
     for variable in variables:
-        writeHistogram(hists[variable], "{}_{}".format(process, variable))
+        writeHistogram(hists[variable], f"{process}_{variable}")
     for variable in variables:
-        writeHistogram(hists_cr[variable], "{}_{}_cr".format(process, variable))
+        writeHistogram(hists_cr[variable], f"{process}_{variable}_cr")
 
     # Print cut-flow report
     print("Cut-flow report (signal region):")
